@@ -36,7 +36,7 @@ const Carousel = (props)=> {
         <div className="carousel">
             {
                 imgs.map((i, index)=> 
-                    <div id = {i.expanded===true ? "expanded" : " "}>
+                    <div onClick={expandOff} id = {i.expanded===true ? "expanded" : " "}>
                         <img onClick={(e) => {expand(e, i)}} key ={i.id} src={i.src} alt={i.id} />
                     </div>
                 )
