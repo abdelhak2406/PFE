@@ -1,12 +1,20 @@
+import {useState, useEffect} from 'react'
 import {FiPhone} from "react-icons/fi";
 import { HiLocationMarker } from 'react-icons/hi';
 import { FiMessageCircle } from 'react-icons/fi';
 import Save from '../components/Save'
 import Carousel from '../components/Carousel'
-import Calendar from 'react-calendar'
 import Navbar from '../components/Navbar'
+import Table from '../components/Table'
+import Calendar from '../components/Calendar'
 
 function Profile() {
+    var [showCalendar, setShowCalendar] = useState(false);
+
+    const toggleCalendar = (e) => {
+        e.preventDefault();
+        setShowCalendar(!showCalendar)
+    }
     return (
         <div className="profile">
             <Navbar />
@@ -21,60 +29,31 @@ function Profile() {
                     <div><HiLocationMarker color="#fff" size="1.5em" /></div>
                 </div>
             </div>
-
-            <div className="container">
-                <div className="block">
-                    <h2>Adresse</h2>
-                    <p>Bab Ezzouar Alger.......</p>
+            {
+                showCalendar? 
+                <div className="container">
+                    <Calendar />
                 </div>
-                <h2>Horaires d'ouverture</h2>
-
-                <div className="table">
-                    <div className="row t-head">
-                        <div className="left-edge"></div>
-                        <div className="title">Morning</div>
-                        <div className="title right-edge">Evening</div>
+                :
+                <div className="container">
+                    <div className="block">
+                        <h2>Adresse</h2>
+                        <p>Bab Ezzouar Alger.......</p>
                     </div>
-                    <div className="row">
-                        <div className="title">Sat</div>
-                        <div>8:00-12:00</div>
-                        <div></div>
-                    </div>
-                    <div className="row">
-                        <div className="title">Sat</div>
-                        <div>8:00-12:00</div>
-                        <div></div>
-                    </div>
-                    <div className="row">
-                        <div className="title">Sat</div>
-                        <div>8:00-12:00</div>
-                        <div></div>
-                    </div>
-                    <div className="row">
-                        <div className="title">Sat</div>
-                        <div>8:00-12:00</div>
-                        <div></div>
-                    </div>
-                    <div className="row">
-                        <div className="title">Sat</div>
-                        <div>8:00-12:00</div>
-                        <div></div>
-                    </div>
-                    <div className="row">
-                        <div className="title">Sat</div>
-                        <div>8:00-12:00</div>
-                        <div></div>
-                    </div>
-                    
-                </div>
-                    
-            
-                <h2>Photos</h2>
-                <Carousel />
+                    <h2>Horaires d'ouverture</h2>
+                    <Table />  
                 
-                {/* <Calendar /> */}
+                    <h2>Photos</h2>
+                    <Carousel titre="titre"/>
+                </div>
+            }
+            
+
+            
+            <div className="rdv-btn">
+                <button onClick = {toggleCalendar} > {showCalendar? 'RETURN TO PROFILE': 'PRENEZ RENDEZ-VOUS' } </button>
             </div>
-            <div className="rdv-btn"><button>PRENEZ RENDEZ-VOUS</button></div>
+            
             
         </div>
     )

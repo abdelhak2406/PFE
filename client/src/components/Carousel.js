@@ -23,21 +23,19 @@ const Carousel = (props)=> {
             src: '../assets/showcase.jpg'
         }
 
-    ])
+    ]);
 
-    // const toggleExpand()
-    const expand = (e, clickedImg)=>{
+    const toggleExpand = (e, clickedImg)=>{
         imgs = imgs.filter(i => {return i.id != clickedImg.id });
-        setImgs([...imgs, {...clickedImg, expanded: true}]);
+        setImgs([...imgs, {...clickedImg, expanded: !clickedImg.expanded }]);
     }
-
 
     return (
         <div className="carousel">
             {
-                imgs.map((i, index)=> 
-                    <div onClick={expandOff} id = {i.expanded===true ? "expanded" : " "}>
-                        <img onClick={(e) => {expand(e, i)}} key ={i.id} src={i.src} alt={i.id} />
+                imgs.map(i =>
+                    <div onClick={(e) => {toggleExpand(e, i)}} id = {i.expanded===true ? "expanded" : " "} key ={i.id}>
+                        <img src={i.src} alt={i.id} />
                     </div>
                 )
             }

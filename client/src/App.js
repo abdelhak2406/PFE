@@ -8,6 +8,7 @@ import Navbar from './components/Navbar';
 import Carousel from './components/Carousel'
 import Search from './pages/Search'
 import Home from './pages/Home'
+import Specialities from './components/Specialities'
 
 const App = () => {
   const [date, setDate] = useState(new Date());
@@ -15,6 +16,7 @@ const App = () => {
 
 
   return (
+    // <Specialities />
     // <Home />
     // <Search />
     // <Navbar />
