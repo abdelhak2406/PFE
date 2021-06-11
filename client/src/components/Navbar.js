@@ -7,10 +7,6 @@ const Navbar = ()=> {
             
             <div className="hamburger"><div></div></div>
             <div className="menu">
-                <div className='header block'>
-                    <h5>aymen aymen</h5>
-
-                </div>
                 <ul>
                     <li><a href="#">Medecins</a></li>
                     <li><a href="#">About</a></li>
