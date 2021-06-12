@@ -22,7 +22,7 @@ const app = express();
 app.use(express.urlencoded({extended: true})); 
 app.use(express.json());
 
-app.get('/', (req, res)=>{
+app.get('/api/doctors', (req, res)=>{
     connection.query('select * from users', (err, result) => {
         res.json({result});
     });

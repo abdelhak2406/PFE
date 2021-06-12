@@ -7,16 +7,17 @@ import Navbar from './components/Navbar';
 
 import Search from './pages/Search'
 import Home from './pages/Home'
-
+import Login from './pages/Login'
 const App = () => {
   const [date, setDate] = useState(new Date());
 
   return (
+    <Login />
     // <Specialities />
     // <Home />
     // <Search />
     // <Navbar />
-    <Profile />
+    // <Profile />
     // <Calendar />
     
   );
