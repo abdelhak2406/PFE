@@ -4,13 +4,15 @@ import Card from '../components/Card'
 const axios = require('axios')
 
 
-const Search = () => {
+const Search = (props) => {
     const [result, setResult] = useState([]);
     
     useEffect(()=>{
-        axios.get('/doctors')
-        .then(res => console.log(res))
-    })
+        fetch(`/api/doctors/`)
+        .then(res => res.json())
+        .then(data => console.log(data))
+        .catch(err => console.log(err));
+    }, [props.id]);
     return (
         <div className='search'>    
             <SearchBox />

@@ -12,13 +12,14 @@ const App = () => {
   const [date, setDate] = useState(new Date());
 
   return (
-    <Login />
+    // <Login />
     // <Specialities />
     // <Home />
     // <Search />
     // <Navbar />
-    // <Profile />
+    <Profile id={1} />
     // <Calendar />
+
     
   );
 }

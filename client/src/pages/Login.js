@@ -30,11 +30,13 @@ const Login = () => {
                 :
                 <form onSubmit = {handleSubmit} className='block'>
                     <input onChange = {handeChange} type="email" id="email" name="email" placeholder='E-mail' required />
-                    <input onChange = {handeChange} type="email" id="email" name="email" placeholder='E-mail' required />
-                    <input onChange = {handeChange} type="email" id="email" name="email" placeholder='E-mail' required />
-                    <input onChange = {handeChange} type="email" id="email" name="email" placeholder='E-mail' required />
-                    <input onChange = {handeChange} type="email" id="email" name="email" placeholder='E-mail' required />
-                    <input onChange = {handeChange} type="password" id="password" name="password" placeholder='Mot de passe' required />
+                    <input onChange = {handeChange} type="password" id="passwor" name="password" placeholder='Mot de passe' required />
+                    <input onChange = {handeChange} type="text" id="firstname" name="firstname" placeholder='Nom' required />
+                    <input onChange = {handeChange} type="text" id="lastname" name="lastname" placeholder='Prenom' required />  
+                    <input onChange = {handeChange} type="tel" id="phone" name="phone" placeholder='Numero Tel' required />
+                    <input onChange = {handeChange} type="date" id="birthdate" name="birthdate" placeholder='birthdate' required />
+                    <input type='radio' name = 'sex' />
+                    <input type='radio' name = 'sex' />
                     <input type='submit' value='SE CONNECTER' id='submit' />
                 </form>
             }

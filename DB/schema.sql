@@ -6,8 +6,8 @@ CREATE TABLE IF NOT EXISTS `users` (
   email VARCHAR(255) NOT NULL,
   `password` VARCHAR(255) NOT NULL,
   phone varchar(10) not null,
-  FirstName VARCHAR(255) not NULL,
-  SecondName VARCHAR(255) ,
+  firstName VARCHAR(255) not NULL,
+  lastname VARCHAR(255) ,
   Sex tinyint(1) not NULL,
   birth_date date not null,
   lang tinyint(1) not NULL default 1,
@@ -29,40 +29,20 @@ CREATE TABLE IF NOT EXISTS `patients` (
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
-CREATE TABLE IF NOT EXISTS wilayas (
-   id_wilaya int not null auto_increment,
-   `name` varchar(20) not null,
-   PRIMARY KEY (id_wilaya)
-)
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
-
-
-CREATE TABLE IF NOT EXISTS communes (
-   id_commune int not null auto_increment,
-   `name` varchar(30) not null,
-   id_wilaya int not null,
-   PRIMARY KEY (id_commune),
-	foreign key (id_wilaya) references wilayas (id_wilaya)
-)
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
-
 CREATE TABLE IF NOT EXISTS addresses (
    id_address int not null auto_increment,
-   longitude varchar(100) not null,
-   latitude varchar(100) not null,
-   id_commune int not null,
-   `text` varchar(500) default null,
-   PRIMARY KEY (id_address),
-   foreign key (id_commune) references communes (id_commune)
+   longitude varchar(50) not null,
+   latitude varchar(50) not null,
+   wilaya varchar(30) not null,
+   commune varchar(30) not null,
+   PRIMARY KEY (id_address)
 )
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
 CREATE TABLE IF NOT EXISTS specialities (
   id_speciality INT NOT NULL AUTO_INCREMENT,
-  name VARCHAR(100) not null,
+  speciality_name VARCHAR(60) not null,
   PRIMARY KEY (id_speciality)
 )
 ENGINE = InnoDB
@@ -77,13 +57,12 @@ CREATE TABLE IF NOT EXISTS forms (
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
-
 CREATE TABLE IF NOT EXISTS `doctors` (
    id_doctor INT NOT NULL,
    `description` varchar(500),
    id_speciality int not null,
    id_address int not null,
-   id_form int not null,
+   id_form int default null,
    work_phone varchar(20) not null,
    session_duration int not null,
    isApprouved int not null default 0,
@@ -100,9 +79,9 @@ CREATE TABLE IF NOT EXISTS work_days(
     day_number int not null,
     id_doctor int not null,
     start_time time not null,
-    end_time time not null,
-    start_time_s2 time,
-    end_time_s2 time,
+    nbr_sessions int not null,
+    start_time_2 time default null,
+    nbr_sessions_2 int default null,
     primary key(id_doctor, day_number),
     foreign key(id_doctor) references doctors(id_doctor)
 )
