@@ -38,6 +38,20 @@ app.post('/api/login', (req, res) => {
     });
   });
 
+
+// inscription  du patient 
+app.post('/api/patients/register', (req, res) => {
+      connection.execute(`insert into users (firstname,lastname, email, password,  birth_date, phone ) values
+       ('${req.body.firstname}', '${req.body.lastname}' , '${req.body.email}' ,
+       '${req.body.password}'  ,'${req.body.birth_date}','${phone}')`
+      , (err, users) => {
+            if(err) res.json({msg:'DATABASE error!'})
+            else    res.json({done: true}); 
+      })
+      
+});
+
+
 app.get('/api/doctors', (req, res)=>{
     connection.execute('select firstname, secondname,  from users where type = 1', (err, result) => {
         res.json({result:result[0]});

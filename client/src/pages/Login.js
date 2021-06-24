@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import axios from 'axios'
 
 const Login = () => {
-    const [page, setPage] = useState(1);
+    const [page, setPage] = useState(0);
     const [state, setState] = useState({
         email:'', 
         password: '',
@@ -27,6 +27,24 @@ const Login = () => {
             else setState({...state, msg: res.data.msg})
         });
     }
+    const handleSignup = async (e) => {
+           e.preventDefault(); 
+           
+            const res = await axios.post('api/patients/register',{
+                email: state.email,
+                password: state.passowrd, 
+                firstname: state.firstname,
+                lastname:  state.lastname,
+                birthdate: state.birthdate,
+                phone: state.phone 
+           })
+
+        if(res.status === 200 ) {
+            setPage(1)
+        }
+        else setState({...state , msg:res.data.msg})
+    };
+
     const handeChange = (e) => {
         setState({...state, [e.target.name]: e.target.value});
     }
