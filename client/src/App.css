@@ -6,7 +6,7 @@
 
 body{
     font-family: "Poppins", sans-serif;
-    background-color: #F0F0F0;
+    background-color: #e8e8e8;
     /* background-color: #0096d6; */
 }
 
@@ -346,13 +346,12 @@ input{
     position:fixed;
     padding:0;
     margin:0;
-
     top:0;
     left:0;
-
     width: 100%;
     height: 100%;
-    background:rgba(255,255,255,0.5);   
+    background:rgba(255,255,255,0.5); 
+    z-index: 10;  
 }
 
 .filter-bar{
@@ -434,3 +433,46 @@ input{
     color: #ececec;
     border-radius: 7px;
 }
+
+.alert{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 1em;
+    background-color: rgba(0,0,0,0.4);
+    font-size: 1.4em;
+    text-align: center;
+    z-index: 10;
+}
+.alert button{
+    font-size: 1em;
+    padding: 0.2em 3em;
+    color: white;
+    background-color: #0096D6;
+    border: 0;
+    margin-top: 1em;    
+}
+
+.msg{
+    display: flex;
+    justify-content: center;
+    color: rgb(182, 0, 0);
+    font-size: 1.2em;
+}
+
+.react-calendar{
+    margin: 0 auto;
+    padding: 1em;
+    border-radius: 7px;
+}
+
+/* @media screen and (min-width: 700px) {
+    body{
+        padding: 0 30%;
+    }
+} */

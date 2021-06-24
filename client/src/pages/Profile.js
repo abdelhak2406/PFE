@@ -1,18 +1,19 @@
 import {useState, useEffect} from 'react'
-import {FiPhone} from "react-icons/fi";
-import { HiLocationMarker } from 'react-icons/hi';
+import {FiPhone} from "react-icons/fi"
+import { HiLocationMarker } from 'react-icons/hi'
 import { FiMessageCircle } from 'react-icons/fi'
 import Save from '../components/Save'
 import Carousel from '../components/Carousel'
 import Navbar from '../components/Navbar'
 import Table from '../components/Table'
 import Calendar from '../components/Calendar'
+import Alert from '../components/Alert'
 
 const Profile = (props) => {
     const [doctor, setDoctor] = useState();
-    const [showCalendar, setShowCalendar] = useState(true);
+    const [showCalendar, setShowCalendar] = useState(false);
+    const [alert, setAlert] = useState(false);
     
-
     useEffect(()=>{
         fetch(`/api/doctors/${props.id}`)
         .then(res => res.json())
@@ -25,18 +26,22 @@ const Profile = (props) => {
         setShowCalendar(!showCalendar)
     }
 
-    
+    const toggleAlert = () => {
+        setAlert(!alert);
+    }
+
     return (
         doctor?
         <div className="profile">
-            <Navbar />
+            <Navbar />  
+            { alert? <Alert msg='Phone copied to the Clipboard.' toggle = {toggleAlert} /> : '' }
             <div className="header block"> 
                 <Save saved = {false} />
                 <div className="image"><img src={doctor.photo} alt=""/></div>
                 <h1 className="name"> { `${doctor.firstname} ${doctor.lastname} ` } </h1>
                 <h6>{doctor.speciality_name}</h6>
                 <div className="icons">
-                    <div onClick={() => {navigator.clipboard.writeText(doctor.work_phone); alert('Copied to the Clipboard') }}>
+                    <div onClick={() => {navigator.clipboard.writeText(doctor.work_phone); toggleAlert(); }}>
                         <FiPhone color="#fff" size="1.5em" />
                     </div>
                     <div><FiMessageCircle color="#fff" size="1.5em" /></div>
@@ -55,9 +60,10 @@ const Profile = (props) => {
                         <h2>Adresse</h2>
                         <p>Bab Ezzouar Alger.......</p>
                     </div>
+                    <br/>
                     <h2>Horaires d'ouverture</h2>
                     <Table sessionDuration = {doctor.session_duration} workDays = {doctor.workDays} />  
-                
+                    <br/>
                     <h2>Photos</h2>
                     <Carousel titre="titre"/>
                 </div>

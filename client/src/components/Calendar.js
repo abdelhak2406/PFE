@@ -1,11 +1,14 @@
 import { useState, useEffect } from 'react'
 import ReactCalendar from 'react-calendar'
 import Sessions from './Sessions'
+import axios from 'axios'
+import Alert from './Alert'
 
 const Calendar = (props) => {
     const [weekDays, setWeekDays] = useState([]);
     const [selectedDay, setSelectedDay] = useState();
     const [rdv, setRdv] = useState();
+    const [alert, setAlert] = useState({show: false, msg: ''});
 
 
     useEffect(()=>{
@@ -23,12 +26,27 @@ const Calendar = (props) => {
 
     const handlePick = (s) =>{
         // new Date().setHours()
-        s.setHours(s.getHours() + 1)
+        s.setHours(s.getHours() + 1);
         // console.log(new Date(s).toISOString());
-        console.log(s.toISOString().slice(0, 19).replace('T', ' '));
-        // let d = props.day.day;
-        // d.setTime(d.getTime + s);
-        // console.log(d.toISOString());
+        // console.log(new Date(s.toISOString().slice(0, 19).replace('T', ' ')));
+
+        axios.post('/api/rdvs', {
+            id_doctor: 2,
+            id_patient: 4,
+            time_rdv: s.toISOString().slice(0, 19).replace('T', ' ')
+        })
+        .then(res => {
+            if(res.data.done) {
+                setAlert({msg: 'Waiting for the doctor confirmation..', show: true})
+                setSelectedDay();
+            }
+            else setAlert({msg: res.data.msg, show: true})
+        }
+        );
+    }
+
+    const toggleAlert = () => {
+        setAlert({...alert, show: !alert.show});
     }
     return (
         <div>
@@ -48,6 +66,9 @@ const Calendar = (props) => {
                     sessionDuration = {props.sessionDuration} 
                     setRdv = {setRdv} />   
                 :''      
+            }   
+            {
+                alert.show? <Alert msg = {alert.msg} toggle = {toggleAlert} /> : ''
             }
         </div>
     )
