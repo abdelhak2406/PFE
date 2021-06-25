@@ -12,17 +12,29 @@ const Login = () => {
         phone: ''
      });
 
+     useEffect(() => {
+         setState({
+            email:'', 
+            password: '',
+            firstname: '',
+            lastname: '',
+            birthdate: new Date(1999, 2, 4),
+            phone: ''
+         });
+     }, [page]);
+
     const handleSubmit = (e) => {
         e.preventDefault();
-        
         axios.post('/api/login', {
             email: state.email,
             password: state.password
         })
         .then(res => {
+            console.log(res.data);
             if (res.status === 200 && res.data.token) {
                 localStorage.setItem('PFE_ACCESS_TOKEN',res.data.token);
                 console.log(localStorage.getItem('PFE_ACCESS_TOKEN'));
+                setState({...state, msg: res.data.token})
             }
             else setState({...state, msg: res.data.msg})
         });
@@ -32,15 +44,15 @@ const Login = () => {
            
             const res = await axios.post('api/patients/register',{
                 email: state.email,
-                password: state.passowrd, 
+                password: state.password, 
                 firstname: state.firstname,
                 lastname:  state.lastname,
                 birthdate: state.birthdate,
                 phone: state.phone 
            })
 
-        if(res.status === 200 ) {
-            setPage(1)
+        if(res.data.done ) {
+            setPage(1);
         }
         else setState({...state , msg:res.data.msg})
     };
@@ -67,7 +79,7 @@ const Login = () => {
                     <input type='submit' value='SE CONNECTER' id='submit' />
                 </form>
                 :
-                <form onSubmit = {handleSubmit} className='block'>
+                <form onSubmit = {handleSignup} className='block'>
                     <input onChange = {handeChange} type="email" id="email" name="email" placeholder='E-mail' required />
                     <input onChange = {handeChange} type="password" id="password" name="password" placeholder='Mot de passe' required />
                     <input onChange = {handeChange} type="text" id="firstname" name="firstname" placeholder='Nom' required />

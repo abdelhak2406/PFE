@@ -4,8 +4,8 @@ const   express = require('express'),
 
 const connection = mysql.createConnection({
     host: 'localhost',
-    user: 'aymen',
-    password: 'aymen',
+    user: 'user',
+    password: 'user',
     database: 'db',
     port: '3306'
 });
@@ -41,15 +41,21 @@ app.post('/api/login', (req, res) => {
 
 // inscription  du patient 
 app.post('/api/patients/register', (req, res) => {
-      connection.execute(`insert into users (firstname,lastname, email, password,  birth_date, phone ) values
+    console.log(req.body);
+      connection.execute(`insert into users (firstname,lastname, email, password,  birth_date, phone , type , sex ) values
        ('${req.body.firstname}', '${req.body.lastname}' , '${req.body.email}' ,
-       '${req.body.password}'  ,'${req.body.birth_date}','${phone}')`
+       '${req.body.password}'  ,'${req.body.birthdate}','${req.body.phone}', 2 , 1)`
       , (err, users) => {
-            if(err) res.json({msg:'DATABASE error!'})
+            if(err) {
+                console.log(err);
+                res.json({msg:'DATABASE error!'})
+            }
             else    res.json({done: true}); 
       })
       
 });
+
+
 
 
 app.get('/api/doctors', (req, res)=>{
