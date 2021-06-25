@@ -25,7 +25,7 @@ app.use(express.json());
 
 
 app.post('/api/login', (req, res) => {
-    // Check user
+    // Get the user if exists
     connection.execute(`select id_user from users where email = '${req.body.email}' and password = '${req.body.password}'`, (err, user)=>{
         if (err) res.json({msg: 'Database error!!'})
         else if(user[0] === undefined) res.json({msg: 'Wrong email or password !'})
@@ -56,23 +56,26 @@ app.post('/api/patients/register', (req, res) => {
 });
 
 
-
-
-app.get('/api/doctors', (req, res)=>{
-    connection.execute('select firstname, secondname,  from users where type = 1', (err, result) => {
-        res.json({result:result[0]});
+app.get('/api/doctors', (req, res) => {
+    connection.execute(`select users.firstname, users.lastname, users.photo,
+    specialities.speciality_name, addresses.wilaya
+    from users, doctors, specialities, addresses where users.type = 1 and doctors.id_doctor = users.id_user 
+    and specialities.id_speciality = doctors.id_speciality 
+    and addresses.id_address = doctors.id_address 
+    and (concat(firstname, ' ', lastname) like '${req.query.text}%' or concat(lastname, ' ', firstname) like '${req.query.text}%') `
+    , (err, result) => {
+        if(err) console.log(err);
+        else res.json({doctors: result});
     });
-
 });
-
 app.get('/api/doctors/:id', (req, res)=>{
     connection.execute(
         `select users.firstname, users.lastname, users.photo,
         doctors.work_phone, doctors.session_duration,
         specialities.speciality_name, 
         addresses.wilaya, addresses.commune, addresses.longitude, addresses.latitude
-        from users, doctors, specialities, addresses where users.id_user = ${req.params.id} and doctors.id_doctor = ${req.params.id} and specialities.id_speciality = doctors.id_speciality and addresses.id_address = doctors.id_address
-    `
+        from users, doctors, specialities, addresses where users.id_user = ${req.params.id} and doctors.id_doctor = ${req.params.id} and specialities.id_speciality = doctors.id_speciality 
+        and addresses.id_address = doctors.id_address`
     , (err, result) => {
         connection.execute(`select * from work_days where id_doctor = ${req.params.id}`, (err, workDays) => {
             res.json({doctor:{...result[0], workDays}})
@@ -106,8 +109,7 @@ app.post('/api/rdvs', (req, res) => {
     });
 });
 
-// FORMAT OF TOKEN
-// Authorization: Bearer <access_token>
+// FORMAT OF THE TOKEN: Authorization: Bearer <access_token>
 
 // Verify Token
 const verifyToken = (req, res, next) => {

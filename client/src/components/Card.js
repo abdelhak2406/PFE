@@ -1,15 +1,15 @@
 import {FaMapMarkerAlt} from 'react-icons/fa';
 
-const Card = () => {
+const Card = (props) => {
     return (
         <div className="block card">
             <div className="image">
-                <img src="../assets/avatar.jpg" alt="user" />
+                <img src = {props.photo} alt="user" />
             </div>
             <div className="text">
-                <h1 className="name">Aymen GHEMAM HAMED</h1>
-                <h2>Generaliste</h2>
-                <span> <FaMapMarkerAlt />Alger</span>
+                <h1 className="name">{props.firstname} {props.lastname} </h1>
+                <h2>{props.speciality_name}</h2>
+                <span> <FaMapMarkerAlt />{props.wilaya.toUpperCase()}</span>
             </div>
 
         </div>

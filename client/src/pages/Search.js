@@ -1,23 +1,30 @@
 import { useState, useEffect } from 'react'
 import SearchBox from '../components/SearchBox'
 import Card from '../components/Card'
+import Navbar from '../components/Navbar'
 const axios = require('axios')
 
 
 const Search = (props) => {
     const [result, setResult] = useState([]);
     
-    useEffect(()=>{
-        fetch(`/api/doctors/`)
-        .then(res => res.json())
-        .then(data => console.log(data))
-        .catch(err => console.log(err));
-    }, [props.id]);
     return (
         <div className='search'>    
-            <SearchBox />
+            <Navbar />
+            <SearchBox setResult = {setResult} />
             <div className='container'>
-                <Card/>
+                {
+                    result.map((d, index) => 
+                        <Card 
+                            firstname={d.firstname} 
+                            lastname={d.lastname} 
+                            photo = {d.photo}
+                            speciality_name = {d.speciality_name} 
+                            wilaya = {d.wilaya}
+                            key = {index} 
+                        />
+                    )
+                }
             </div>
         </div>
     )

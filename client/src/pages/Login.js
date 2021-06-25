@@ -59,6 +59,7 @@ const Login = () => {
 
     const handeChange = (e) => {
         setState({...state, [e.target.name]: e.target.value});
+        console.log(e.target.value);
     }
     const togglePage = (i) => {
         setPage(i);

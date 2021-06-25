@@ -1,17 +1,31 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { AiOutlineSearch } from 'react-icons/ai'
 import { HiLocationMarker } from 'react-icons/hi'
 import {AiOutlineFilter} from 'react-icons/ai'
 import {AiFillFilter} from 'react-icons/ai'
 import DataList  from './DataList'
 import Return from '../components/Return'
+import axios from 'axios'
 
 const SearchBox = (props) => {
-    const [filter, setFilter] = useState({});
+    const [filter, setFilter] = useState({text: ''});
     const [showList, setShowList] = useState({
         specialities: false,
         wilayas: false
     });
+
+    useEffect(() => {
+        if(filter.text)
+            axios.get('/api/doctors', {
+                params: {
+                    text: filter.text
+                }
+            })
+            .then(res => {
+                if(res.data.doctors) props.setResult(res.data.doctors);
+            })
+            .catch(err => console.log(err));
+    }, [filter.text])
 
     var [list, setList] = useState([
         {
@@ -102,9 +116,9 @@ const SearchBox = (props) => {
                 <input onChange={ handleInput } type='text' name='doctor' placeholder='Trouver un medecin' />
             </div>
             <div className='filter-bar'>
-                <div onClick={() => {setShowList({...showList, specialities: true}) } } > {filter.speciality? <AiFillFilter size="1.5em" color='blue' />: <AiOutlineFilter size="1.5em" />} Specialites</div>
+                <div onClick={() => {setShowList({...showList, specialities: true}) } } > {filter.speciality? <AiFillFilter size="1.5em" color='#0096d6' />: <AiOutlineFilter size="1.5em" />} Specialites</div>
                 <div onClick={() => {setShowList({...showList, wilayas: true})} } >Wilaya</div>
-                <div className="location" onClick= { handleLocation } > <HiLocationMarker color={filter.location? 'blue': ''} size="1.5em" /> My location</div>
+                <div className="location" onClick= { handleLocation } > <HiLocationMarker color={filter.location? '#0096d6': ''} size="1.5em" /> My location</div>
                 
                 {
                    showList.specialities ? <DataList data = {list} choose = {chooseSpeciality} /> : ''
