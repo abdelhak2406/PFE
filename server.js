@@ -68,6 +68,7 @@ app.get('/api/doctors', (req, res) => {
         else res.json({doctors: result});
     });
 });
+
 app.get('/api/doctors/:id', (req, res)=>{
     connection.execute(
         `select users.firstname, users.lastname, users.photo,
@@ -83,11 +84,21 @@ app.get('/api/doctors/:id', (req, res)=>{
     });
 });
 
-app.get('/api/rdvs', (req, res) => {
-    connection.execute(`select * from rdvs`, (err, result) => {
+app.get('/api/rdvs/:id_doctor', (req, res) => {
+    connection.execute(`select session_duration from doctors where id_doctor = ${req.params.id_doctor}`, (err, session) => {
         if(err) console.log(err);
-        else res.json({rdvs: result});
-    });
+        else 
+            connection.execute(`select rdvs.time_rdv, rdvs.state, 
+            users.id_user, users.firstname, users.lastname, users.photo, users.phone
+            from rdvs, users where rdvs.id_doctor = ${req.params.id_doctor} and users.id_user = rdvs.id_patient`, (err, result) => {
+                if(err) console.log(err);
+                else 
+                    connection.execute(`select * from work_days where id_doctor = ${req.params.id_doctor}`, (err, workDays) => {
+                        if(err) console.log(err);
+                        res.json({rdvs: result, sessionDuration:session[0].session_duration, workDays: workDays});
+                    })
+            });
+    })
 });
 
 
@@ -108,6 +119,7 @@ app.post('/api/rdvs', (req, res) => {
         else res.json({done: true})
     });
 });
+
 
 // FORMAT OF THE TOKEN: Authorization: Bearer <access_token>
 

@@ -39,7 +39,7 @@ const Profile = (props) => {
                 <Save saved = {false} />
                 <div className="image"><img src={doctor.photo} alt=""/></div>
                 <h1 className="name"> { `${doctor.firstname} ${doctor.lastname} ` } </h1>
-                <h6>{doctor.speciality_name}</h6>
+                <h5>{doctor.speciality_name}</h5>
                 <div className="icons">
                     <div onClick={() => {navigator.clipboard.writeText(doctor.work_phone); toggleAlert(); }}>
                         <FiPhone color="#fff" size="1.5em" />
@@ -57,20 +57,20 @@ const Profile = (props) => {
                 :
                 <div className="container">
                     <div className="block">
-                        <h2>Adresse</h2>
+                        <h2 className='title'>Adresse</h2>
                         <p>Bab Ezzouar Alger.......</p>
                     </div>
                     <br/>
-                    <h2>Horaires d'ouverture</h2>
+                    <h2 className='title'>Horaires d'ouverture</h2>
                     <Table sessionDuration = {doctor.session_duration} workDays = {doctor.workDays} />  
                     <br/>
-                    <h2>Photos</h2>
-                    <Carousel titre="titre"/>
+                    <h2 className='title'>Photos</h2> 
                 </div>
             }
-            
+            <Carousel />
+            <br/>
             <div className="rdv-btn">
-                <button onClick = {toggleCalendar} > {showCalendar? 'RETURN TO PROFILE': 'PRENEZ RENDEZ-VOUS' } </button>
+                <button onClick = {toggleCalendar} > {showCalendar? 'Profile': 'PRENEZ RENDEZ-VOUS' } </button>
             </div>
             
         </div>

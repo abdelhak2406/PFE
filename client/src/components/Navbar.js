@@ -7,12 +7,15 @@ const Navbar = ()=> {
             
             <div className="hamburger"><div></div></div>
             <div className="menu">
-                <ul>
-                    <li><a href="#">Medecins</a></li>
-                    <li><a href="#">About</a></li>
-                    <li><a href="#">Services</a></li>
-                    <li><a href="#">Contact</a></li>
-                </ul>
+                <div className='a'>
+                    <ul>
+                        <li><a href="#">Medecins</a></li>
+                        <li><a href="#">About</a></li>
+                        <li><a href="#">Services</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+                <div className='b'></div>
             </div>
         </div>
     );
