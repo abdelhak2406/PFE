@@ -8,6 +8,7 @@ import Search from './pages/Search'
 import Home from './pages/Home'
 import Login from './pages/Login'
 import DoctorCalendar from "./pages/DoctorCalendar"
+import Chat from './pages/Chat'
 import {
   BrowserRouter as Router,
   Switch,
@@ -22,10 +23,13 @@ const App = () => {
   return (
     <Router>
       <Switch >
+        <Route exact path ='/chat'> 
+           <Chat/>
+        </Route>
         <Route exact path='/login'>
           <Login />
         </Route>
-        <Route exact path = 'doctor-calendar'>
+        <Route exact path = '/doctor-calendar'>
           <DoctorCalendar />
         </Route>
         <Route exact path = '/search'>

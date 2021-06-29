@@ -8,7 +8,7 @@ body{
     font-family: "Roboto", sans-serif; 
     background-color: #caf0f8;
 }
-
+    
 .container{
     display: flex;
     flex-direction: column;
@@ -223,6 +223,7 @@ input{
     background-color: #0e0e0e;
     font-size: 1em;
     outline: none;
+    transition: 0.2s;
 }
 
 

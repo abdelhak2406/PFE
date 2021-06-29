@@ -144,4 +144,15 @@ const verifyToken = (req, res, next) => {
   
   }
 
+  app.get('/api/messages/:id_doctor/:id_patient', (req, res) =>
+    connection.execute(
+        `select * from messages where (id_sender = ${req.params.id_doctor} and id_reciever =${req.params.id_patient})
+         or(id_sender = ${req.params.id_patient} and id_reciever =${req.params.id_doctor})`
+    ,(err, messages)=>{
+        if(err) console.log(err);
+        else res.json({messages})
+    })
+    
+  )
+
 app.listen(5000, ()=> console.log('server running...'))
