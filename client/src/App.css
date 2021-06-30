@@ -536,3 +536,11 @@ input{
 .rdv .bottom p{
     font-size: 0.9em;
 }
+.input-chat {
+   position: fixed;
+   left:0 ;
+   bottom: 5px; 
+}
+.message-list{
+    padding: 0 1em; 
+}

@@ -16,7 +16,7 @@ const SearchBox = (props) => {
 
     useEffect(() => {
         if(filter.text)
-            axios.get('/api/doctors', {
+            axios.get('/api/doctors/search', {
                 params: {
                     text: filter.text
                 }

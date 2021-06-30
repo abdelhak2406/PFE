@@ -35,6 +35,7 @@ const App = () => {
       .then(res => {
         if(res.data.user) {
           localStorage.setItem('id_user', res.data.user.id_user);
+          localStorage.setItem('type', res.data.user.type); 
           setstate({loading: false, isLoggedin: true})
         }
         else setstate({...state, loading: false}) 
@@ -58,6 +59,9 @@ const App = () => {
       {
         state.isLoggedin?
         <Switch >
+          <Route exact path = '/chat'>
+            <Chat />
+          </Route>
           <Route exact path = '/doctor-calendar'>
             <DoctorCalendar />
           </Route>

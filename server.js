@@ -40,6 +40,9 @@ const verifyToken = (req, res, next) => {
 }
 
 const app = express();
+const server = require('http').createServer(app);
+const io = require('socket.io')(server);
+// io.on('connection', () => { /* … */ });
 app.use(express.urlencoded({extended: true})); 
 app.use(express.json());
 
@@ -154,15 +157,28 @@ app.post('/api/rdvs', (req, res) => {
 });
 
 
-  app.get('/api/messages/:id_doctor/:id_patient', (req, res) =>
-    connection.execute(
-        `select * from messages where (id_sender = ${req.params.id_doctor} and id_reciever =${req.params.id_patient})
-         or(id_sender = ${req.params.id_patient} and id_reciever =${req.params.id_doctor})`
-    ,(err, messages)=>{
-        if(err) console.log(err);
-        else res.json({messages})
-    })
-    
-  )
+//   app.get('/api/messages/:id_doctor/:id_patient', (req, res) =>
+//     connection.execute(
+//         `select * from messages where (id_sender = ${req.params.id_doctor} and id_reciever =${req.params.id_patient})
+//          or(id_sender = ${req.params.id_patient} and id_reciever =${req.params.id_doctor})`
+//     ,(err, messages)=>{
+//         if(err) console.log(err);
+//         else res.json({messages})
+//     })
+//   )
 
-app.listen(5000, ()=> console.log('server running...'))
+  io.on('connection', (socket)=>{
+      socket.on('message', (message)=>{
+          console.log(message);
+          connection.execute(
+              `insert into messages ( text, id_sender, id_receiver) values 
+                ('${message.text}',${message.id_sender}, ${message.id_receiver} ) `
+          , (err, result)=>{
+                if(err) console.log(err)    
+                else console.log(result);            
+          } )
+      })
+  })
+
+
+server.listen(5000, ()=> console.log('server running...'))
