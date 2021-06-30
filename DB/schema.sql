@@ -162,7 +162,6 @@ CREATE TABLE IF NOT EXISTS messages(
 )
 ENGINE = InnoDB;
 
-
 CREATE TABLE IF NOT EXISTS chats(
     id_doctor int not null,
     id_patient int not null,

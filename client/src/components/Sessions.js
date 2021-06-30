@@ -7,14 +7,13 @@ const Sessions = (props) => {
     useEffect(() => {
         props.selectedDate.setDate(props.selectedDate.getDate() + 1);
 
-        axios.get(`/api/rdvs/${2}/${props.selectedDate.toISOString().substring(0, 10)}`)
+        axios.get(`/api/rdvs/${props.id_doctor}/${props.selectedDate.toISOString().substring(0, 10)}`)
         .then(res => {
             let list = [];
                 
             for (let i = 0; i < props.day.nbr_sessions; i++) {
                 const d = new Date(props.selectedDate.toISOString().substring(0, 10)+':'+props.day.start_time);
                 d.setMinutes(d.getMinutes() + i * props.sessionDuration);
-                // console.log(isTaken(res.data.rdvs, d));
                 if(isTaken(res.data.rdvs, d) === false) list.push(d);
             } 
             setSessions(list);

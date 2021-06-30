@@ -1,12 +1,15 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@800&display=swap');
+/* @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@800&display=swap'); */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@500&display=swap');
+
 *{
     margin: 0;
     box-sizing: border-box;
 }
 
 body{
-    font-family: "Roboto", sans-serif; 
-    background-color: #caf0f8;
+    /* font-family: "Roboto", sans-serif;  */
+    font-family: 'Noto Sans JP', sans-serif;
+    background-color: #DDDDDD;
 }
     
 .container{
@@ -109,7 +112,7 @@ img{
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #457b9d;
+    background-color: #3C8DAD;
     border-radius: 10px;
 }
 .profile h5{
@@ -128,15 +131,15 @@ img{
 }
 .profile .rdv-btn button{
     padding: 1em 2em;
-    /* background-color: rgb(255, 201, 9); */
-    background-color: #e63946;
+    background-color: #fcc200;
+    /* background-color: #ee9440; */
     font-size: 16px;
-    color: white;
+    color: #000;
     -webkit-box-shadow: 0 10px 6px -6px #777;
     -moz-box-shadow: 0 10px 6px -6px #777;
     box-shadow: 0 10px 6px -6px #777;
-    border: 0px;
-    border-radius: 7px;
+    border: 1px solid white;
+    border-radius: 5px;
 }
 .save{
     position: absolute;
@@ -168,10 +171,10 @@ img{
 }
 .title{
     /* font-size: 1.2em; */
-    color: #093470;
+    color: #125D98;
 }
 .table .t-head div{
-    background-color: #1d3557;
+    background-color: #125D98;
     color: white;
 } 
 .left-edge{
@@ -255,7 +258,7 @@ input{
     height: 50px;
     z-index: 1;
     padding: 0;
-    background-color: #1d3557;
+    background-color: #fff;
     box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
 }
 
@@ -350,13 +353,14 @@ input{
     display: flex;
     align-items: center;
     justify-content: center;
-    /* border-top: 0; */
-    /* background-color: rgba(0, 0, 0, 0.2); */
     transition: all 0.4s ease ;
 }
 .navbar .menu .a{
     width: 70%;
     height: 100%;
+    padding: 4em 0;
+    /* display: flex; */
+    /* align-items: center; */
     box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
     background-color: #fff;
 }
@@ -429,17 +433,6 @@ input{
     padding: 0 1em;
 }
 
-.login .block.header{
-    flex-direction: row;
-    justify-content: center;
-    padding: 0.2em 0;
-    margin-bottom: 3em;
-    font-size: 1em;
-}
-.login .header div{
-    width: 100px;
-    height: 100%;
-}
 .login form input{
     padding: 0.6em 2em;
     margin: 0.2em 0;
@@ -452,9 +445,6 @@ input{
     background-color: #0096D6;
     border: 0;
     margin-top: 3em;
-}
-.login .active{
-    border-bottom: 1.2px solid #005276;
 }
 
 .sessions{

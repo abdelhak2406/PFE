@@ -8,18 +8,19 @@ import Navbar from '../components/Navbar'
 import Table from '../components/Table'
 import Calendar from '../components/Calendar'
 import Alert from '../components/Alert'
+import axios from 'axios'
+import { useParams } from 'react-router-dom'
 
 const Profile = (props) => {
     const [doctor, setDoctor] = useState();
     const [showCalendar, setShowCalendar] = useState(false);
     const [alert, setAlert] = useState(false);
-    
+    const {id} = useParams();
     useEffect(()=>{
-        fetch(`/api/doctors/${props.id}`)
-        .then(res => res.json())
-        .then(data => {setDoctor(data.doctor); console.log(data.doctor);})
+        axios(`/api/doctors/${id}`)
+        .then(res => {setDoctor(res.data.doctor)})
         .catch(err => console.log(err));
-    }, [props.id])
+    }, [])
 
     const toggleCalendar = (e) => {
         e.preventDefault();
@@ -52,7 +53,7 @@ const Profile = (props) => {
             {
                 showCalendar?
                 <div className="container">
-                    <Calendar sessionDuration = {doctor.session_duration} workDays = {doctor.workDays} />   
+                    <Calendar id_doctor={id} sessionDuration = {doctor.session_duration} workDays = {doctor.workDays} />   
                 </div>
                 :
                 <div className="container">
@@ -67,6 +68,7 @@ const Profile = (props) => {
                     <h2 className='title'>Photos</h2> 
                 </div>
             }
+            <br/>
             <Carousel />
             <br/>
             <div className="rdv-btn">

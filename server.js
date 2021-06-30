@@ -18,45 +18,78 @@ connection.connect(function(error){
     }
 });
 
+// FORMAT OF THE TOKEN: Authorization: Bearer <access_token>
+const verifyToken = (req, res, next) => {
+    // Get auth header value
+    const bearerHeader = req.headers['authorization'];
+    // Check if bearer is undefined
+    if(typeof bearerHeader !== 'undefined') {
+      // Split at the space
+      const bearer = bearerHeader.split(' ');
+      // Get token from array
+      const bearerToken = bearer[1];
+      // Set the token
+      req.token = bearerToken;
+      // Next middleware
+      next();
+    } else {
+      // Forbidden
+      res.sendStatus(403);
+    }
+  
+}
 
 const app = express();
 app.use(express.urlencoded({extended: true})); 
 app.use(express.json());
 
-
 app.post('/api/login', (req, res) => {
     // Get the user if exists
-    connection.execute(`select id_user from users where email = '${req.body.email}' and password = '${req.body.password}'`, (err, user)=>{
+    connection.execute(`select id_user, type, firstname, lastname from users where email = '${req.body.email}' and password = '${req.body.password}'`, (err, user)=>{
         if (err) res.json({msg: 'Database error!!'})
         else if(user[0] === undefined) res.json({msg: 'Wrong email or password !'})
         else 
-            jwt.sign({user}, 'Toufik rkhis', { expiresIn: '3000000s' }, (err, token) => {
+            jwt.sign({user: user[0]}, 'Toufik rkhis', { expiresIn: '999999999999999s' }, (err, token) => {
                 res.json({
                     token
                 });
             });
     });
-  });
+});
+
+app.get('/api/user', verifyToken, (req, res) => {
+    jwt.verify(req.token, 'Toufik rkhis', (err, authData) => {
+        if(err) {
+          res.sendStatus(403);
+        } 
+        else {
+            res.json({user: authData.user});
+        }
+      });
+})
 
 
 // inscription  du patient 
 app.post('/api/patients/register', (req, res) => {
     console.log(req.body);
-      connection.execute(`insert into users (firstname,lastname, email, password,  birth_date, phone , type , sex ) values
+      connection.execute(`insert into users (firstname, lastname, email, password, birth_date, phone , type , sex ) values
        ('${req.body.firstname}', '${req.body.lastname}' , '${req.body.email}' ,
-       '${req.body.password}'  ,'${req.body.birthdate}','${req.body.phone}', 2 , 1)`
+       '${req.body.password}'  ,'${req.body.birthdate}','${req.body.phone}', 2 , ${req.body.sex})`
       , (err, users) => {
             if(err) {
                 console.log(err);
                 res.json({msg:'DATABASE error!'})
             }
-            else    res.json({done: true}); 
+            else {
+                console.log(users);
+                res.json({done: true}); 
+            }
       })
       
 });
 
 
-app.get('/api/doctors', (req, res) => {
+app.get('/api/doctors/search', (req, res) => {
     connection.execute(`select users.firstname, users.lastname, users.photo,
     specialities.speciality_name, addresses.wilaya
     from users, doctors, specialities, addresses where users.type = 1 and doctors.id_doctor = users.id_user 
@@ -80,6 +113,7 @@ app.get('/api/doctors/:id', (req, res)=>{
     , (err, result) => {
         connection.execute(`select * from work_days where id_doctor = ${req.params.id}`, (err, workDays) => {
             res.json({doctor:{...result[0], workDays}})
+            
         })
     });
 });
@@ -103,7 +137,6 @@ app.get('/api/rdvs/:id_doctor', (req, res) => {
 
 
 app.get('/api/rdvs/:id_doctor/:day', (req, res) => {
-    console.log(`select time_rdv from rdvs where id_doctor = ${req.params.id_doctor} and date(time_rdv) = ${req.params.day}`);
     connection.execute(`select time_rdv from rdvs where id_doctor = ${req.params.id_doctor} and date(time_rdv) = '${req.params.day}'`, (err, result) => {
         if(err) console.log(err);
         else res.json({rdvs: result});
@@ -120,29 +153,6 @@ app.post('/api/rdvs', (req, res) => {
     });
 });
 
-
-// FORMAT OF THE TOKEN: Authorization: Bearer <access_token>
-
-// Verify Token
-const verifyToken = (req, res, next) => {
-    // Get auth header value
-    const bearerHeader = req.headers['authorization'];
-    // Check if bearer is undefined
-    if(typeof bearerHeader !== 'undefined') {
-      // Split at the space
-      const bearer = bearerHeader.split(' ');
-      // Get token from array
-      const bearerToken = bearer[1];
-      // Set the token
-      req.token = bearerToken;
-      // Next middleware
-      next();
-    } else {
-      // Forbidden
-      res.sendStatus(403);
-    }
-  
-  }
 
   app.get('/api/messages/:id_doctor/:id_patient', (req, res) =>
     connection.execute(

@@ -20,19 +20,15 @@ const Calendar = (props) => {
     const selectDay = (selectedDate) => {
         const day = props.workDays.filter(d => d.day_number === selectedDate.getDay() )[0];
         setSelectedDay({selectedDate, day});
-        // setSelectedDay({...props.workDays.filter(elm => {return elm.day_number === day.getDay()})[0], day: day});
     }
 
 
     const handlePick = (s) =>{
-        // new Date().setHours()
         s.setHours(s.getHours() + 1);
-        // console.log(new Date(s).toISOString());
-        // console.log(new Date(s.toISOString().slice(0, 19).replace('T', ' ')));
-
+        let id_patient = localStorage.getItem('id_user');
         axios.post('/api/rdvs', {
-            id_doctor: 2,
-            id_patient: 4,
+            id_doctor: props.id_doctor,
+            id_patient,
             time_rdv: s.toISOString().slice(0, 19).replace('T', ' ')
         })
         .then(res => {
@@ -60,6 +56,7 @@ const Calendar = (props) => {
             {
                  selectedDay?
                  <Sessions 
+                    id_doctor = {props.id_doctor}
                     handlePick = {handlePick} 
                     selectedDate = {selectedDay.selectedDate}
                     day = { selectedDay.day } 
