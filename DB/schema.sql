@@ -31,8 +31,8 @@ DEFAULT CHARACTER SET = utf8;
 
 CREATE TABLE IF NOT EXISTS addresses (
    id_address int not null auto_increment,
-   longitude varchar(50) not null,
-   latitude varchar(50) not null,
+   longitude float ,
+   latitude float ,
    wilaya varchar(30) not null,
    commune varchar(30) not null,
    PRIMARY KEY (id_address)
@@ -156,6 +156,7 @@ CREATE TABLE IF NOT EXISTS messages(
     `text` varchar(500) not null,
     id_doctor int not null,
     id_patient int not null,
+    date_message datetime,
     primary key(id_message),
     foreign key(id_doctor) references doctors(id_doctor),
     foreign key(id_patient) references patients(id_patient)

@@ -1,6 +1,7 @@
 import {FaMapMarkerAlt} from 'react-icons/fa';
 
 const Card = (props) => {
+    
     return (
         <div className="block card">
             <div className="image">

@@ -9,7 +9,13 @@ const Search = (props) => {
     const [result, setResult] = useState([]);
     
     return (
-        <div className='search'>    
+        <div className='search' style = {
+            {
+                background: 'url(../assets/search.svg) no-repeat center center fixed',
+                backgroundSize: 'contain',
+                backgroundPosition: 'center'
+            } }>     
+
             <Navbar />
             <SearchBox setResult = {setResult} />
             <div className='container'>

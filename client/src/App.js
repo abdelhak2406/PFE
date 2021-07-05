@@ -1,6 +1,7 @@
 import 'react-calendar/dist/Calendar.css'
 import 'react-big-calendar/lib/css/react-big-calendar.css'
 import "./App.css"
+import 'leaflet/dist/leaflet.css';
 import {useState, useEffect} from "react"
 import Profile from './pages/Profile'
 import Search from './pages/Search'
@@ -9,6 +10,7 @@ import Login from './pages/Login'
 import DoctorCalendar from "./pages/DoctorCalendar"
 import Chat from './pages/Chat'
 import axios from 'axios'
+import Location from './components/Location'
 import {
   BrowserRouter as Router,
   Switch,
@@ -17,6 +19,7 @@ import {
   Redirect
 } from "react-router-dom"
 import Register from './pages/Register'
+import DoctorRegister from './pages/DoctorRegister';
 
 
 const App = () => {
@@ -58,6 +61,9 @@ const App = () => {
       {
         state.isLoggedin?
         <Switch >
+          <Route exact path='/map'>
+            <Location />
+          </Route>
           <Route exact path = '/doctor-calendar'>
             <DoctorCalendar />
           </Route>
@@ -68,13 +74,22 @@ const App = () => {
             <Profile />
           </Route>
           <Route path='/'>
-            <Redirect to='search' />
+            <Home />
           </Route>
         </Switch>
         :
         <Switch>
+          <Route exact path='/home'>
+            <Home />
+          </Route>
+          <Route exact path='/map'>
+            <Location />
+          </Route>
           <Route exact path ='/register'>
             <Register />
+          </Route>
+          <Route exact path ='/doctor-register'>
+            <DoctorRegister />
           </Route>
           <Route exact path = '/login'>
             <Login login={login} />
