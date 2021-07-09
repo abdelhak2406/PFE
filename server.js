@@ -44,6 +44,9 @@ const verifyToken = (req, res, next) => {
 
 
 const app = express();
+const server = require('http').createServer(app);
+const io = require('socket.io')(server);
+// io.on('connection', () => { /* … */ });
 app.use(express.urlencoded({extended: true})); 
 app.use(express.json());
 // app.use(express.static(path.join(__dirname, './public')));
@@ -75,7 +78,7 @@ app.post('/api/login', (req, res) => {
 app.get('/api/user', verifyToken, (req, res) => {
     jwt.verify(req.token, 'Toufik rkhis', (err, authData) => {
         if(err) {
-          res.sendStatus(403);
+          res.json({status: false});
         } 
         else {
             res.json({user: authData.user});
@@ -127,9 +130,45 @@ app.post('/api/doctors', (req, res) => {
                     res.json({msg:'DATABASE error!'})
                 }
                 else {
-                    console.log(users.insertId);
-                    res.json({done: true}); 
-                    insert
+                    connection.execute(`insert into addresses(longitude, latitude, wilaya, commune) values
+                    (${req.body.longitude}, ${req.body.latitude}, '${req.body.wilaya}', '${req.body.commune}')`
+                    ,(err, address)=>{
+                        if(err) {
+                            console.log(err);
+                            res.json({msg:'DATABASE error!'})
+                        }
+                        else
+                            connection.execute(`insert into forms(licence_photo, card_photo) values 
+                            ('${req.body.licence}', '${req.body.card}')`, (err, form)=>{
+                                if(err) {
+                                    console.log(err);
+                                    res.json({msg:'DATABASE error!'})
+                                }
+                                else
+                                    connection.execute(`insert into doctors(id_doctor, id_speciality, id_address, id_form, work_phone, session_duration) values
+                                    (${user.insertId}, ${req.body.id_speciality}, ${address.insertId}, ${form.insertId}, '${req.body.work_phone}', ${req.body.session_duration})`
+                                    , (err, doctor) => {
+                                        if(err) {
+                                            console.log(err);
+                                            res.json({msg:'DATABASE error!'})
+                                        }
+                                        else {
+                                            let array = [];
+                                            req.body.work_days.forEach(day => {
+                                                array.push([day.day_number, user.insertId, day.start_time, day.nbr_sessions]);
+                                            });
+                                            connection.query("insert into work_days(day_number, id_doctor, start_time, nbr_sessions) values ?"
+                                            , [array], (err, days)=> {
+                                                if(err) {
+                                                    console.log(err);
+                                                    res.json({msg:'DATABASE error!'});
+                                                }
+                                                else  res.json({done: true}); 
+                                            })
+                                        }
+                                    })
+                            })
+                    })
                 }
            })
         }
@@ -137,8 +176,7 @@ app.post('/api/doctors', (req, res) => {
 });
 
 app.get('/api/doctors/search', (req, res) => {
-    console.log(req.query);
-    connection.execute(`select users.firstname, users.lastname, users.photo,
+    connection.execute(`select users.id_user, users.firstname, users.lastname, users.photo,
     specialities.speciality_name, addresses.wilaya
     from users, doctors, specialities, addresses where users.type = 1 and doctors.id_doctor = users.id_user 
     and specialities.id_speciality = doctors.id_speciality 
@@ -186,6 +224,15 @@ app.get('/api/rdvs/:id_doctor', (req, res) => {
     })
 });
 
+app.get('/api/rdvs/patient/:id_patient', (req, res) => {
+    connection.execute(`select rdvs.time_rdv, rdvs.state, rdvs.id_doctor,
+    users.firstname, users.lastname, users.photo, users.phone
+    from rdvs, users where rdvs.id_patient = ${req.params.id_patient} and users.id_user = rdvs.id_doctor`, (err, result) => {
+        if(err) console.log(err);
+        else 
+            res.json({rdvs: result});
+    });
+});
 
 app.get('/api/rdvs/:id_doctor/:day', (req, res) => {
     connection.execute(`select time_rdv from rdvs where id_doctor = ${req.params.id_doctor} and date(time_rdv) = '${req.params.day}'`, (err, result) => {
@@ -204,16 +251,31 @@ app.post('/api/rdvs', (req, res) => {
     });
 });
 
-
-app.get('/api/messages/:id_doctor/:id_patient', (req, res) =>
+app.post('/api/rdvs/remove', (req, res) => {
     connection.execute(
-        `select * from messages where (id_sender = ${req.params.id_doctor} and id_reciever =${req.params.id_patient})
-            or(id_sender = ${req.params.id_patient} and id_reciever =${req.params.id_doctor})`
-    ,(err, messages)=>{
+        `delete from rdvs where id_doctor = ${req.body.id_doctor} and time_rdv = '${req.body.time_rdv}'`
+    , (err, result) => {
+        if(err) res.json({msg: 'Database error...'})
+        else res.json({done: true})
+    });
+});
+
+app.get('/api/physical-rdvs/:id_doctor/:day', (req, res) => {
+    connection.execute(`select time_rdv from physical_rdvs where id_doctor = ${req.params.id_doctor} and date(time_rdv) = '${req.params.day}'`, (err, result) => {
         if(err) console.log(err);
-        else res.json({messages})
-    })
-)
+        else res.json({rdvs: result});
+    });
+});
+
+app.post('/api/physical-rdvs', (req, res) => {
+    connection.execute(
+        `insert into physical_rdvs(id_doctor, time_rdv) values 
+        (${req.body.id_doctor}, '${req.body.time_rdv}')`
+    , (err, result) => {
+        if(err) res.json({msg: 'Database error...'})
+        else res.json({done: true})
+    });
+});
 
 app.get('/api/specialities', (req, res) => {
     connection.execute(`select * from specialities`, (err, specialities) => {
@@ -235,4 +297,85 @@ app.post('/api/images', upload.single('image'),(req, res) => {
     res.json({url: `http://localhost:5000/api/uploads/${req.file.filename}`});  
 });
 
-app.listen(5000, ()=> console.log('server running...'))
+app.get('/api/favorites/:id_patient', (req, res)=>{
+    connection.execute(`select users.id_user, users.firstname, users.lastname, users.photo,
+    specialities.speciality_name, addresses.wilaya
+    from users, doctors, specialities, addresses where users.type = 1 and doctors.id_doctor = users.id_user 
+    and specialities.id_speciality = doctors.id_speciality 
+    and addresses.id_address = doctors.id_address 
+    and users.id_user in (select id_doctor from favorites where id_patient = ${req.params.id_patient})
+    `
+    , (err, result) => {
+        if(err) console.log(err);
+        else res.json({doctors: result});
+    });
+})
+
+app.post('/api/favorites/add', (req, res)=>{
+    connection.execute(`insert into favorites(id_doctor, id_patient) values (${req.body.id_doctor}, ${req.body.id_patient})`, (err, result)=>{
+        if(err) console.log(err);
+        else res.json({status: true});
+    })
+})
+
+app.post('/api/favorites/remove', (req, res)=>{
+    connection.execute(`delete from favorites where id_doctor = ${req.body.id_doctor} and id_patient = ${req.body.id_patient}`, (err, result)=>{
+        if(err) console.log(err);
+        else res.json({status: true});
+    })
+})
+
+app.get('/api/favorites/:id_doctor/:id_patient', (req, res)=>{
+    connection.execute(`select * from favorites where id_doctor = ${req.params.id_doctor} and id_patient =  ${req.params.id_patient}`
+    , (err, result)=>{
+        if(err) console.log(err);
+        else if(result[0]) res.json({status: true})
+        else res.json({status: false});
+    })
+})
+
+app.get('/api/messages/:id_doctor/:id_patient', (req, res) =>{
+    // console.log(req.query);
+    connection.execute(
+        `select * from messages where id_message > ${req.query.id} and 
+        ((id_sender = ${req.params.id_doctor} and id_receiver =${req.params.id_patient})
+        or(id_sender = ${req.params.id_patient} and id_receiver =${req.params.id_doctor}))`
+        ,(err, messages)=>{
+            if(err) console.log(err);
+            else res.json({messages})
+    })
+})
+
+app.post('/api/messages/', (req, res) =>{
+    connection.execute(`insert into messages (id_sender, id_receiver, text, date_message) values 
+        (${req.body.id_sender}, ${req.body.id_receiver}, '${req.body.text}', now() )`
+        ,(err, messages)=>{
+            if(err) console.log(err);
+            else res.json({done: true})
+    })
+})
+    
+
+// io.on('connection', (socket)=>{
+//     // socket.emit('message', 'welcome to chat..');
+//     socket.on('join', roomId => {
+//         socket.join(roomId);
+//     });
+
+//     socket.on('chatMessage', (message)=>{
+//         io.in(roomId).emit('message', message)    
+//         console.log(message);    
+//         // connection.execute(
+//         //     `insert into messages ( text, id_sender, id_receiver) values 
+//         //     ('${message.text}',${message.id_sender}, ${message.id_receiver} ) `
+//         // , (err, result)=>{
+//         //     if(err) console.log(err)    
+//         //     else console.log(result);            
+//         // } )
+//     })
+// })
+
+
+
+
+server.listen(5000, ()=> console.log('server running...'))

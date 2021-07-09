@@ -15,17 +15,17 @@ const Table = (props) => {
     }, [props.workDays])
     return (
         <div className="table">
-            <div className="row t-head">
+            <div className="t-row t-head">
                 <div className="left-edge"></div>
-                <div className="title">Morning</div>
-                <div className="title right-edge">Evening</div>
+                {/* <div className="title">Morning</div> */}
+                <div className="title right-edge">Horaire</div>
             </div>
             {
                 props.workDays.map(day => 
-                    <div className="row">
+                    <div className="t-row">
                         <div className="title">{dayNames[day.day_number]}</div>
                         <div> { `${day.start_time.substring(0, day.start_time.length-3)} - ${ day.end_time }` } </div>
-                        <div></div>
+                        {/* <div></div> */}
                     </div>
                 )
             }

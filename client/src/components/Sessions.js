@@ -1,44 +1,44 @@
 import {useState, useEffect} from 'react'
 import axios from 'axios'
+import moment from 'moment'
+import 'moment/locale/fr'
+moment.locale('fr') 
 
 const Sessions = (props) => {
     const [sessions, setSessions] = useState();
-
     useEffect(() => {
-        props.selectedDate.setDate(props.selectedDate.getDate() + 1);
-
-        axios.get(`/api/rdvs/${props.id_doctor}/${props.selectedDate.toISOString().substring(0, 10)}`)
+        axios.get(`/api/rdvs/${props.id_doctor}/${moment(props.selectedDate).format('YYYY-MM-DD')}`)
         .then(res => {
-            let list = [];
-                
-            for (let i = 0; i < props.day.nbr_sessions; i++) {
-                const d = new Date(props.selectedDate.toISOString().substring(0, 10)+':'+props.day.start_time);
-                d.setMinutes(d.getMinutes() + i * props.sessionDuration);
-                if(isTaken(res.data.rdvs, d) === false) list.push(d);
-            } 
-            setSessions(list);
+            axios.get(`/api/physical-rdvs/${props.id_doctor}/${moment(props.selectedDate).format('YYYY-MM-DD')}`)
+            .then(res2 => {
+                let list = [];  
+                for (let i = 0; i < props.day.nbr_sessions; i++) {
+                    var d = moment(`${moment(props.selectedDate).format('YYYY-MM-DD')} ${props.day.start_time}`)
+                    d = d.add(i * props.sessionDuration, 'minutes');
+                    if(isTaken(res.data.rdvs, d) === false && isTaken(res2.data.rdvs, d) === false) list.push(d);
+                } 
+                setSessions(list);
+            });
         });
     }, [props.selectedDate])
 
 
     const isTaken = (list, d) => {
-        const c = new Date(d);
-        c.setMinutes(c.getMinutes() - 60);
         let exist = false;
         list.forEach(element => {
-            if(element.time_rdv === d.toISOString()) exist = true;
+            if(moment(element.time_rdv).format('YYYY-MM-DD hh:mm:ss') === d.format('YYYY-MM-DD hh:mm:ss')) exist = true;
         });
         return exist;
     }    
 
     return (
         <div className="block sessions">
-            <h1>Pick a session :</h1>
+            <h2>Choisir une session :</h2>
             {
                 sessions?
                 sessions.map((s, index) => 
                     <div className="session" key={index} onClick = {() => {props.handlePick(s);}}>
-                        {s.toTimeString().substring(0, 5)}  
+                        {s.format('hh:mm')}  
                     </div>
                 )
                 :

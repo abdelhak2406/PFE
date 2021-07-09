@@ -1,8 +1,11 @@
+import {AiFillCloseSquare} from 'react-icons/ai'
+
 const Appointment = (props) => {
     return (
         <div className= 'rdv'>
             <div className='top'>
-                <h3> { props.title.toUpperCase() } </h3>
+                <span> { props.title.toUpperCase() } </span>
+                <AiFillCloseSquare onClick = {() => props.remove(props.start)} color='#fff' size='30px' />
             </div>
             <div className = 'bottom'>
                 <div>

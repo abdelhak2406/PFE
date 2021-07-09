@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react";
 import { Redirect } from "react-router";
 import axios from 'axios'
-import { Link } from "react-router-dom";
 import ImageUpload from "../components/ImageUpload";
 import SpecialityDropDown from "../components/SpecialityDropDown";
 import WilayaDropDown from "../components/WilayaDropDown";
 import { Fragment } from "react";
 import MapView from "../components/MapView";
+import WorkDayInput from "../components/WorkDayInput";
+
 
 const Register = () => {
     const [state, setState] = useState({
@@ -25,6 +26,10 @@ const Register = () => {
         work_phone: '',
         licence: '',
         card: '' ,
+        latitude: null,
+        longitude: null,
+        session_duration: 10,
+        work_days: [],
         msg: ''
      });
 
@@ -59,7 +64,6 @@ const Register = () => {
 
     const doctorSignup = async (e) => {
         e.preventDefault(); 
-        console.log(state);
         const res = await axios.post('api/doctors',{
             email: state.email,
             password: state.password, 
@@ -75,7 +79,11 @@ const Register = () => {
             commune: state.commune,
             licence: state.licence,
             card: state.card,
-            work_phone: state.work_phone
+            work_phone: state.work_phone,
+            longitude: state.longitude,
+            latitude: state.latitude,
+            session_duration: state.session_duration,
+            work_days: state.work_days
        })
         if(res.data.done ) {
             setState({...state, registered: true})
@@ -95,6 +103,13 @@ const Register = () => {
         setState({...state, sex: e.target.value});
     }
 
+    const setLocation = (lat, lng) => {
+        setState({...state, latitude: lat, longitude: lng})
+    }
+
+    const addDay = (day)=>{
+        setState({...state, work_days: [...state.work_days, day ]})
+    }
     
 
     return (
@@ -102,11 +117,6 @@ const Register = () => {
         <Redirect to="/login" />
         :
         <div className='login' >
-            {/* <div className='header'>
-                <div>
-                    <h2 className='title'>Inscription</h2>
-                </div>
-            </div> */}
             <div className='container' style = {
                         {
                             background: 'url(../assets/doctor.svg) no-repeat center center fixed',
@@ -136,12 +146,25 @@ const Register = () => {
                         {
                             state.type == 1?
                             <Fragment>
+                                <br/>
+                                <br/>
                                 <label >Specialite:</label>
                                 <SpecialityDropDown choose = {(id) => {console.log(id);setState({...state, id_speciality: id})}} data = {list.specialities} />
                                 <label >Tel professionel:</label>
                                 <input onChange = {handeChange} id='work_phone' type="tel" name="work_phone" placeholder='Numero Tel' required />
-                                <label >Adresse:</label>
+                                <label >Duree de la seance:</label>
+                                <input onChange = {handeChange} id='duree' type="number" min='10' max='100' name="session_duration" placeholder='La duree de la seance en min' required />
+                                
+                                <label>Les jours de travail: </label>
+                                <WorkDayInput day='Samedi' day_number={6} addDay={addDay} setmsg={(msg)=>{setState({...state, msg })}} />
+                                <WorkDayInput day='Dimanche' day_number={0} addDay={addDay} setmsg={(msg)=>{setState({...state, msg })}} />
+                                <WorkDayInput day='Lundi' day_number={1} addDay={addDay} setmsg={(msg)=>{setState({...state, msg })}} />
+                                <WorkDayInput day='Mardi' day_number={2} addDay={addDay} setmsg={(msg)=>{setState({...state, msg })}} />
+                                <WorkDayInput day='Mercredi' day_number={3} addDay={addDay} setmsg={(msg)=>{setState({...state, msg })}} />
+                                <WorkDayInput day='Jeudi' day_number={4} addDay={addDay} setmsg={(msg)=>{setState({...state, msg })}} />
+                                <WorkDayInput day='Vendredi' day_number={5} addDay={addDay} setmsg={(msg)=>{setState({...state, msg })}} />
 
+                                <label >Adresse:</label>
                                 <WilayaDropDown choose = {(wilaya)=>{setState({...state, wilaya: wilaya})}} />
                                 <input onChange = {handeChange} id='commune' type="text" name="commune" placeholder='Commune' required />
                                 <br/>
@@ -159,7 +182,9 @@ const Register = () => {
                                     </div>
                                     <ImageUpload onUpload = {(url) => {setState({...state, licence: url})}} />
                                 </div>
-                                <MapView />
+                                <br/>
+                                <br/>
+                                <MapView setLocation = {setLocation} />
                         </Fragment>
                         :''
                         }

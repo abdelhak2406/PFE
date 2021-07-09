@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import {Redirect, Link} from 'react-router-dom'
+import {Link} from 'react-router-dom'
 import axios from 'axios'
 
 const Login = (props) => {
@@ -33,7 +33,6 @@ const Login = (props) => {
                 background: 'url(../assets/doctor.svg) no-repeat center center fixed',
                 backgroundSize: '100%',
                 backgroundPosition: '0 6em',
-                // backgroundColor: '#fff'
             } }>
             {/* <div className='header'>
                 <h2 className='title'> Connexion </h2>

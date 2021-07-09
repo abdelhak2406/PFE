@@ -4,7 +4,6 @@ import { HiLocationMarker } from 'react-icons/hi'
 import {AiOutlineFilter} from 'react-icons/ai'
 import {AiFillFilter} from 'react-icons/ai'
 import DataList  from './DataList'
-import Return from '../components/Return'
 import axios from 'axios'
 
 const SearchBox = (props) => {
@@ -56,7 +55,7 @@ const SearchBox = (props) => {
         setShowList({...showList, wilayas: false});
     }
     const handleLocation = () => {
-        // setFilter({...filter, location: true})
+        setFilter({...filter, location: !filter.location})
     }
 
     return (
@@ -66,9 +65,9 @@ const SearchBox = (props) => {
                 <input onChange={ handleInput } type='text' name='doctor' placeholder='Trouver un medecin' />
             </div>
             <div className='filter-bar'>
-                <div onClick={() => {setShowList({wilayas: false, specialities: true}) } } > {filter.speciality? <AiFillFilter size="1.5em" color='#0096d6' />: <AiOutlineFilter size="1.5em" />} Specialites</div>
+                <div onClick={() => {setShowList({wilayas: false, specialities: true}) } } > {filter.speciality? <AiFillFilter size="1em" color='#0096d6' />: <AiOutlineFilter size="1.5em" />} Specialites</div>
                 <div onClick={() => {setShowList({specialities: false, wilayas: true})} } >Wilaya</div>
-                <div className="location" onClick= { handleLocation } > <HiLocationMarker color={filter.location? '#0096d6': ''} size="1.5em" /> My location</div>
+                <div onClick= { handleLocation } > <HiLocationMarker color={filter.location? '#0096d6': ''} size="1.5em" /></div>
                 
                 {
                     showList.specialities ? <DataList type = {1} data = {list.specialities} choose = {chooseSpeciality} /> : ''

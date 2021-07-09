@@ -1,29 +1,34 @@
-import { useState, useEffect } from 'react'
-import {useMapEvents, MapContainer, TileLayer, Marker, Popup } from 'react-leaflet'
+import { useState, useEffect} from 'react'
+import {MapContainer, TileLayer, Marker, Popup} from 'react-leaflet'
 import L from 'leaflet';
-L.Icon.Default.imagePath='leaflet_images/';
+import { AiOutlineClose } from 'react-icons/ai'
+import Card from './Card';
+delete L.Icon.Default.prototype._getIconUrl;
 
+L.Icon.Default.mergeOptions({
+    iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png').default,
+    iconUrl: require('leaflet/dist/images/marker-icon.png').default,
+    shadowUrl: require('leaflet/dist/images/marker-shadow.png').default
+});
 
-const Location = () => {
-    const [state, setstate] = useState({position: [51.505, -0.09], map: null})
+const MapView = (props) => {
+    const [state, setstate] = useState({pos: [3, 6], position: [props.lat, props.lng], map: null});
+    const [toggle, setToggle] = useState(false);
+
+    useEffect(() => {
+        locate();
+    }, [])
 
     var options = {
-        enableHighAccuracy: true,
+        enableHighAccuracy: true,   
         timeout: 5000,
         maximumAge: 0,
     };
     function success(pos) {
         var crd = pos.coords;
-        
-        console.log("Your current position is:");
-        console.log(`Latitude : ${crd.latitude}`);
-        console.log(`Longitude: ${crd.longitude}`);
-        console.log(`More or less ${crd.accuracy} meters.`);
-        setstate({...state, position:[crd.latitude, crd.longitude]});
-        console.log(state);
-
+        setstate({...state, pos:[crd.latitude, crd.longitude]});
         const {map} = state;
-        if(map) map.flyTo(state.position)
+        if(map) map.flyTo(state.pos)
     }
     
     function errors(err) {
@@ -35,18 +40,14 @@ const Location = () => {
             navigator.permissions
             .query({ name: "geolocation" })
             .then(function (result) {
-            if (result.state === "granted") {
-                console.log(result.state);
-                //If granted then you can directly call your function here
-                navigator.geolocation.getCurrentPosition(success);
-            } else if (result.state === "prompt") {
-                navigator.geolocation.getCurrentPosition(success, errors, options);
-            } else if (result.state === "denied") {
-                //If denied then you have to show instructions to enable location
-            }
-            result.onchange = function () {
-                console.log(result.state);
-            };
+                if (result.state === "granted") {
+                    //If granted then you can directly call your function here
+                    navigator.geolocation.getCurrentPosition(success);
+                } else if (result.state === "prompt") {
+                    navigator.geolocation.getCurrentPosition(success, errors, options);
+                } else if (result.state === "denied") {
+                    //If denied then you have to show instructions to enable location
+                }
             });
         } else {
         alert("Sorry Not available!");
@@ -54,23 +55,54 @@ const Location = () => {
     }
 
     return (
-        // <div>
-            <div id='location'>
-                <MapContainer center={state.position} zoom={13} scrollWheelZoom={true} whenCreated = {map => setstate({...state, map})}>
-                <TileLayer
-                    attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                />
+        <div id='location'>
+            {
+                <div className='close' onClick={props.toggle}>
+                    <AiOutlineClose color="#f00" size="100%" />
+                </div>
+            }
+            
+            <MapContainer
+                center={state.position}
+                zoom={13}
+                style={{ height: "100vh" }}
+                whenCreated = {map => setstate({...state, map})}
+            >
+            <TileLayer
+                attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            />
+            {/* <MapConsumer>
+                {(map) => {
+                    map.on("click", function (e) {
+                        const { lat, lng } = e.latlng;
+                        setstate({...state, position: e.latlng})
+                    });
+                    return null;
+                }}
+            </MapConsumer> */}
+            {
+                state.position?
                 <Marker position={state.position}>
                     <Popup>
-                    A pretty CSS3 popup. <br /> Easily customizable.
+                    <Card 
+                        id_user= {props.id_user}
+                        firstname={props.firstname} 
+                        lastname={props.lastname} 
+                        photo = {props.photo}
+                        speciality_name = {props.speciality_name} 
+                        wilaya = {props.wilaya}
+                        // key = {propindex} 
+                    />
                     </Popup>
                 </Marker>
-                </MapContainer>
-            </div>
-            // <button onClick = {locate}> Locate </button>    
-        // </div>
+                :
+                ''
+            }
+            
+            </MapContainer>
+        </div>
     )
 }
 
-export default Location;
+export default MapView

@@ -24,16 +24,15 @@ const Calendar = (props) => {
 
 
     const handlePick = (s) =>{
-        s.setHours(s.getHours() + 1);
-        let id_patient = localStorage.getItem('id_user');
-        axios.post('/api/rdvs', {
+        let body = {
             id_doctor: props.id_doctor,
-            id_patient,
-            time_rdv: s.toISOString().slice(0, 19).replace('T', ' ')
-        })
+            time_rdv: s.format('YYYY-MM-DD hh:mm:ss')
+        }
+        if(props.type == 1) body.id_patient = localStorage.getItem('id_user');
+        axios.post(`/api/${props.type == 1? 'rdvs': 'physical-rdvs'}`, body)
         .then(res => {
             if(res.data.done) {
-                setAlert({msg: 'Waiting for the doctor confirmation..', show: true})
+                setAlert({msg: 'Rendez-vous confirme.', show: true})
                 setSelectedDay();
             }
             else setAlert({msg: res.data.msg, show: true})
@@ -56,6 +55,7 @@ const Calendar = (props) => {
             {
                  selectedDay?
                  <Sessions 
+                    type = {props.type}
                     id_doctor = {props.id_doctor}
                     handlePick = {handlePick} 
                     selectedDate = {selectedDay.selectedDate}

@@ -80,8 +80,6 @@ CREATE TABLE IF NOT EXISTS work_days(
     id_doctor int not null,
     start_time time not null,
     nbr_sessions int not null,
-    start_time_2 time default null,
-    nbr_sessions_2 int default null,
     primary key(id_doctor, day_number),
     foreign key(id_doctor) references doctors(id_doctor)
 )
@@ -120,7 +118,7 @@ ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
 CREATE TABLE IF NOT EXISTS reviews(
-    id_doctor int not null,
+    id_doctor int not null, 
     id_patient int not null,
     review int not null,
     primary key(id_doctor, id_patient),
@@ -154,12 +152,12 @@ DEFAULT CHARACTER SET = utf8;
 CREATE TABLE IF NOT EXISTS messages(
 	id_message int not null auto_increment,
     `text` varchar(500) not null,
-    id_doctor int not null,
-    id_patient int not null,
     date_message datetime,
+    id_sender int not null,
+    id_receiver int not null,
     primary key(id_message),
-    foreign key(id_doctor) references doctors(id_doctor),
-    foreign key(id_patient) references patients(id_patient)
+    foreign key(id_receiver) references users(id_user),
+    foreign key(id_sender) references users(id_user)
 )
 ENGINE = InnoDB;
 
@@ -178,7 +176,7 @@ ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
 CREATE TABLE IF NOT EXISTS admins(
-    id_admin int not null auto_increment,
+    id_admin int not null auto_increment,           
     useranme varchar(100),
     `password` varchar(400),
     primary key(id_admin)

@@ -1,11 +1,11 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import SearchBox from '../components/SearchBox'
 import Card from '../components/Card'
 import Navbar from '../components/Navbar'
 const axios = require('axios')
 
 
-const Search = (props) => {
+const Search = () => {
     const [result, setResult] = useState([]);
     
     return (
@@ -22,6 +22,7 @@ const Search = (props) => {
                 {
                     result.map((d, index) => 
                         <Card 
+                            id_user= {d.id_user}
                             firstname={d.firstname} 
                             lastname={d.lastname} 
                             photo = {d.photo}

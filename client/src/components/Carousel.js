@@ -1,26 +1,26 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
 const Carousel = (props)=> {
     var [imgs, setImgs] = useState([
         {
             id: 1,
             expanded: false,
-            src: '../assets/showcase.jpg'
+            src: '../assets/1.jpg'
         },
         {
             id: 2,
             expanded: false,
-            src: '../assets/showcase.jpg'
+            src: '../assets/2.png'
         },
         {
             id: 3,
             expanded: false,
-            src: '../assets/showcase.jpg'
+            src: '../assets/3.jpg'
         },
         {
             id: 4,
             expanded: false,
-            src: '../assets/showcase.jpg'
+            src: '../assets/4.png'
         }
 
     ]);

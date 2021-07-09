@@ -1,13 +1,11 @@
 import { useState, useEffect } from 'react'
 import { Calendar, momentLocalizer } from 'react-big-calendar'
-import moment from 'moment'
 import axios from 'axios'
 import Appointment from '../components/Appointment'
-import { Fragment } from 'react'
-import Navbar from '../components/Navbar'
+import {GiPin} from 'react-icons/gi'
+import moment from 'moment'
 import 'moment/locale/fr'
 import Return from '../components/Return'
-
 const localizer = momentLocalizer(moment)
 moment.locale('fr') 
 
@@ -21,7 +19,7 @@ const DoctorCalendar = (props) => {
     });
 
     useEffect(() => {
-        axios.get('/api/rdvs/2')
+        axios.get(`/api/rdvs/${localStorage.getItem('id_user')}`)
         .then(res => res.data)
         .then(data => {
             const list = [];
@@ -29,7 +27,8 @@ const DoctorCalendar = (props) => {
                 const ds = moment(rdv.time_rdv);
                 const de = moment(rdv.time_rdv).add(data.sessionDuration, 'm')
                 let e = {
-                    title: `${rdv.firstname} ${rdv.lastname}`,
+                    title: <GiPin color='#000' size='35px' />,
+                    patient: `${rdv.firstname} ${rdv.lastname}`,
                     start: ds,
                     end: de,
                     allDay: false,
@@ -46,26 +45,44 @@ const DoctorCalendar = (props) => {
         setstate({...state, day: day, dayList: list, selected: true});
     }
 
+    const removeRDV = (time_rdv) => {
+        axios.post('/api/rdvs/remove', {
+            id_doctor: localStorage.getItem('id_user'),
+            time_rdv: time_rdv.format('YYYY-MM-DD hh:mm:ss')
+        })
+        .then(res => {
+            if(res.data.done) setstate({...state, dayList: state.dayList.filter(r => r.start.format('YYYY-MM-DD hh:mm:ss') != time_rdv.format('YYYY-MM-DD hh:mm:ss'))})
+        })
+        .catch(err => console.log(err))
+    }
+
     return (
         <div className = 'doctor-calendar'>
-            <Return url='/' name='Calendrier de rendez vous' />
+            {
+                state.selected?
+                <Return name={moment(state.day).format("dddd Do MMMM  YYYY")} url = '/doctor-calendar' />
+                :
+                <Return name='Calendrier des rendez-vous' url = '/' />
+                
+            }
+            
             {
                 state.selected === true?
                 <div className='container'>
-                    <h3 className='title'> Les rendez-vous de {moment(state.day).format("dddd,Do MMMM  YYYY")} </h3>
                     <div className='rdvs'>
                         {
                             state.dayList.map(r => 
                                 <Appointment 
                                     start = {r.start} 
-                                    title = {r.title}
+                                    title = {r.patient}
+                                    remove = {removeRDV}
                                 />
                             )
                         }
                     </div>
                 </div>
                 :
-                <div className='container'>
+                <div className='container block'>
                     <Calendar
                     selectable
                     defaultDate = {new Date()}

@@ -15,18 +15,22 @@ import {
   BrowserRouter as Router,
   Switch,
   Route,
-  Link,
   Redirect
 } from "react-router-dom"
 import Register from './pages/Register'
-import DoctorRegister from './pages/DoctorRegister';
+import Favorites from './pages/Favorites';
+import Agenda from './pages/Agenda';
+import DoctorHome from './pages/DoctorHome';
+import PhysicalRDV from './pages/PhysicalRDV'
+import Chats from './pages/Chats';
 
 
 const App = () => {
   const [state, setstate] = useState({
     isLoggedin: false, 
     loading: true,
-    token: localStorage.getItem('PFE_ACCESS_TOKEN')
+    token: localStorage.getItem('PFE_ACCESS_TOKEN'),
+    type: 2
   });
   useEffect(() => {
     if(state.token){
@@ -38,7 +42,8 @@ const App = () => {
       .then(res => {
         if(res.data.user) {
           localStorage.setItem('id_user', res.data.user.id_user);
-          setstate({loading: false, isLoggedin: true})
+          localStorage.setItem('type', res.data.user.type); 
+          setstate({loading: false, isLoggedin: true, type: res.data.user.type})
         }
         else setstate({...state, loading: false}) 
       })
@@ -50,8 +55,59 @@ const App = () => {
   const login = (token) => {
     localStorage.setItem('PFE_ACCESS_TOKEN',token);
     // setstate({...state, token})
-    window.location.reload()
+    window.location.reload();
   }
+
+  const routes = 
+  state.type == 2?
+  <Switch >
+    <Route exact path = '/chat/:id_doctor/:id_patient'>
+      <Chat />
+    </Route>
+    <Route exact path = '/chatlist'>
+      <Chats />
+    </Route>
+    <Route exact path = '/search'>
+      <Search />
+    </Route>
+    <Route exact path ='/profile/:id'>
+      <Profile />
+    </Route>
+    <Route exact path='/favorites'>
+      <Favorites />
+    </Route>
+    <Route exact path='/agenda'>
+      <Agenda />
+    </Route>
+    <Route exact path='/'>
+      <Home />
+    </Route>
+    <Route path='/'>
+      <Redirect to='/' />
+    </Route>
+  </Switch>
+  :
+  <Switch >
+    <Route exact path = '/chat/:id_doctor/:id_patient'>
+      <Chat />
+    </Route>
+    <Route exact path = '/chatlist'>
+      <Chats />
+    </Route>
+    <Route exact path = '/doctor-agenda'>
+      <DoctorCalendar />
+    </Route>
+    <Route exact path ='/sessions'>
+      <PhysicalRDV />
+    </Route>
+    <Route exact path='/'>
+      <DoctorHome />
+    </Route>
+    
+    <Route path='/'>
+      <Redirect to='/' />
+    </Route>
+  </Switch>
 
   return (
     state.loading?
@@ -60,23 +116,7 @@ const App = () => {
     <Router>
       {
         state.isLoggedin?
-        <Switch >
-          <Route exact path='/map'>
-            <Location />
-          </Route>
-          <Route exact path = '/doctor-calendar'>
-            <DoctorCalendar />
-          </Route>
-          <Route exact path = '/search'>
-            <Search />
-          </Route>
-          <Route exact path ='/profile/:id'>
-            <Profile />
-          </Route>
-          <Route path='/'>
-            <Home />
-          </Route>
-        </Switch>
+        routes
         :
         <Switch>
           <Route exact path='/home'>
@@ -87,9 +127,6 @@ const App = () => {
           </Route>
           <Route exact path ='/register'>
             <Register />
-          </Route>
-          <Route exact path ='/doctor-register'>
-            <DoctorRegister />
           </Route>
           <Route exact path = '/login'>
             <Login login={login} />
